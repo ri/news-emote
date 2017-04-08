@@ -1,0 +1,55 @@
+@import "variables";
+
+
+body {
+  background-color: #fff;
+
+  // #feeds > div {
+  //   width: 100px;
+  //   height: 100px;
+  // }
+  #feeds {
+    display: flex;
+    height: 100vh;
+  }
+  .news-feed {
+    height: 100vh;
+    flex: 1;
+    overflow-y: scroll;
+    outline: 1px solid red;
+    position: relative;
+    text-align: left;
+
+    .title {
+      position: fixed;
+      background-color: white;
+    }
+
+    .headline {
+      line-height: 2em;
+      font-size: 0.86em;
+      padding: 10px;
+      display: block;
+      position: relative;
+
+      .s-neg, .s-pos {
+        animation: biggen 0.3s ease-in forwards;
+        animation-delay: 1s;
+      }
+
+      .v-neg, .v-pos {
+        animation: evenbiggen 0.3s ease-in forwards;
+        animation-delay: 0.5s;
+      }
+    }
+  }
+}
+
+@keyframes biggen {
+  to { font-size: 2em }
+}
+
+
+@keyframes evenbiggen {
+  to { font-size: 4em }
+}
