@@ -12,6 +12,7 @@ class Headlines {
     this.negFilter = (d) => d.sentiment.compound <= -0.25
     this.noFilter = (d) => true
     this.currentFilter = this.noFilter
+    this.currentIndex = 0
 
     // data["news-data"].forEach((d) => {
     //   var mean = d3.mean(d.sentiments, (h) => h.sentiment.compound)
@@ -29,12 +30,12 @@ class Headlines {
 
     // })
     this.cScale = d3.scalePow(2).domain([-1, -0.5, 0, 0.5, 1]).range(['#d7191c','#fdae61','#ffffbf','#a6d96a','#1a9641'])
-    this.lineY = d3.scaleLinear().range([100, 0])
-    this.lineX = d3.scaleLinear().domain([0, 10]).range([0, 100])
+    // this.lineY = d3.scaleLinear().range([60, 0])
+    // this.lineX = d3.scaleLinear().domain([0, 0]).range([0, 200])
+    // this.posLine = this.lineGen("pos")
+    // this.negLine = this.lineGen("neg")
+    // this.neuLine = this.lineGen("neu")
     this.contain = d3.select("#feeds")
-    this.line = d3.line()
-      .x((d,i) => this.lineX(i))
-      .y((d) => this.lineY(d.pos/d.total ? d.pos/d.total : 0))
 
     this.draw()
   }
@@ -48,22 +49,63 @@ class Headlines {
       .append("div")
       .attr("class", "news-feed")
 
+    this.lines = this.newsFeeds.append("svg")
+      .attr("class", "sentiment-lines")
+      .style("width", "100%")
+      .style("height", "5")
+
     this.newsFeeds.append("div")
       .attr("class", "title")
       .text((d) => d.name)
 
-    this.lines = this.newsFeeds.append("svg")
-      .attr("class", "sentiment-lines")
-      .attr("width", "100%")
-      .attr("height", 100)
-
-    this.posLine = this.lines.append("path")
+    this.lines.append("rect")
       .datum((d) => d.counts)
-      .attr("stroke", "black")
-      .attr("fill", "none")
       .attr("class", "pos-line")
-      .attr("d", this.line)
+      .attr("height", 5)
+      .attr("width", `${100/3}%`)
+      // .style("width", "calc(100%  /3);")
 
+    this.lines.append("rect")
+      .datum((d) => d.counts)
+      .attr("class", "neg-line")
+      .attr("height", 5)
+      .attr("x", `${100/3}%`)
+      .attr("width", `${100/3}%`)
+      // .style("width", "calc(100%  /3);")
+
+    this.lines.append("rect")
+      .datum((d) => d.counts)
+      .attr("class", "neu-line")
+      .attr("height", 5)
+      .attr("x", `${100/3 * 2}%`)
+      .attr("width", `${100/3}%`)
+      // .style("width", "calc(100%  /3);")
+    // this.lines = this.newsFeeds.append("svg")
+    //   .attr("class", "sentiment-lines")
+    //   .attr("width", "100%")
+    //   .attr("height", 100)
+
+
+    // this.lines.append("path")
+    //   .datum((d) => d.counts)
+    //   .attr("stroke", "green")
+    //   .attr("fill", "none")
+    //   .attr("class", "pos-line")
+    //   .attr("d", this.posLine)
+
+    // this.lines.append("path")
+    //   .datum((d) => d.counts)
+    //   .attr("stroke", "red")
+    //   .attr("fill", "none")
+    //   .attr("class", "neg-line")
+    //   .attr("d", this.negLine)
+
+    // this.lines.append("path")
+    //   .datum((d) => d.counts)
+    //   .attr("stroke", "grey")
+    //   .attr("fill", "none")
+    //   .attr("class", "neu-line")
+    //   .attr("d", this.neuLine)
 
     this.newsFeeds.append("div")
       .attr("class", "headlines")
@@ -75,6 +117,14 @@ class Headlines {
     d3.select("#all-good").on("click", () => this.filterBy(this.posFilter))
 
   }
+
+  // lineGen(key) {
+  //   var line = d3.line()
+  //     .x((d,i) => this.lineX(i))
+  //     .y((d) => this.lineY(d[key]/d.total ? d[key]/d.total : 0))
+  //     .curve(d3.curveCatmullRom)
+  //   return line
+  // }
 
   filterBy(filter) {
     this.currentFilter = filter
@@ -133,14 +183,29 @@ class Headlines {
             .style("margin-top", "0px")
 
           var lines = d3.select(el.parentNode)
-          lines.select(".sentiment-lines .pos-line")
-            .datum((d) => data.counts)
-            .attr("d", this.line)
 
-          curr++
-          // if (!this.currentFilter(d)) { t.flush()}
+          lines.select(".sentiment-lines .pos-line")
+            // .datum((d) => data.counts)
+            .transition()
+            .attr("width", `${counts.pos/counts.total * 100}%`)
+
+          lines.select(".sentiment-lines .neg-line")
+            // .datum((d) => data.counts)
+            .transition()
+            .attr("x", `${counts.pos/counts.total * 100}%`)
+            .attr("width", `${counts.neg/counts.total * 100}%`)
+
+          lines.select(".sentiment-lines .neu-line")
+            // .datum((d) => data.counts)
+            .transition()
+            .attr("x", `${(counts.pos + counts.neg)/counts.total * 100}%`)
+            .attr("width", `${counts.neu/counts.total * 100}%`)
+
+          // if (this.currentIndex < curr) { this.lineX.domain([0, counts.total])}
+          this.currentIndex = curr++
+
         } else { t.stop() }
-      }, 2000)
+      }, 2400)
     }, index * 400)
 
 
@@ -149,5 +214,5 @@ class Headlines {
 }
 
 d3.queue()
-  .defer(d3.json, 'data/data-us.json')
+  .defer(d3.json, 'data/data-au.json')
   .await((e, d) => new Headlines(e, d))

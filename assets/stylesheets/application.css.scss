@@ -2,54 +2,142 @@
 
 
 body {
-  background-color: #fff;
+  background-color: #333;
+  font-family: $type;
 
   // #feeds > div {
   //   width: 100px;
   //   height: 100px;
   // }
+
+  h1 {
+    text-align: center;
+    color: #fff;
+    font-weight: normal;
+    font-size: 1.5em;
+    // text-transform: uppercase;
+    margin: 0 0 0.5em;
+    position: fixed;
+    bottom: 10px;
+    left: 0;
+    background-color: rgba(0,0,0,0.7);
+    padding: 0 20px;
+    z-index: 100;
+  }
+
+  #controls {
+    text-align: center;
+    height: 3em;
+    position: fixed;
+    bottom: 10px;
+    z-index: 100;
+    right: 10px;
+
+    a {
+      padding: 2px 5px;
+      margin: 0 1em;
+      color: #222;
+      background-color: #666;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    #show-all { &.active { background-color: #fff; } &:hover { background-color: #ddd }}
+    #hide-neutral { &.active { background-color: #666; } &:hover { background-color: #999 }}
+    #all-good { &.active { background-color: #1a9641; } &:hover { background-color: lighten(#1a9641, 10%)}}
+    #all-bad { &.active { background-color: #d7191c; } &:hover { background-color: lighten(#d7191c, 10%)}}
+
+  }
+
   #feeds {
     display: flex;
     height: 100vh;
+    position: absolute;
+    width: 100%;
+    top: 0;
   }
   .news-feed {
-    height: 100vh;
+    // height: 100vh;
+    background-color: #2d2d2d;
     flex: 1;
-    overflow-y: scroll;
-    outline: 1px solid red;
+    // overflow-y: scroll;
     position: relative;
     text-align: left;
+    padding-bottom: 2em;
 
-    .title {
-      position: fixed;
-      background-color: white;
+    &:nth-child(2n) {
+      background-color: #333;
     }
 
-    .headline {
-      line-height: 2em;
-      font-size: 0.86em;
-      padding: 10px;
-      display: block;
+    .title {
       position: relative;
+      font-size: 1.25em;
+      margin: 0.5em 0;
+      font-weight: normal;
+      // background-color: #333;
+      color: #fff;
+      width: 100%;
+      text-align: center;
+    }
 
-      .s-neg, .s-pos {
-        animation: biggen 0.3s ease-in forwards;
-        animation-delay: 1s;
+    .sentiment-lines {
+      position: absolute;
+      z-index: 10;
+
+      > div {
+        height: 6px;
+        width: calc(100%  /3);
+        float: left;
       }
 
-      .v-neg, .v-pos {
-        animation: evenbiggen 0.3s ease-in forwards;
-        animation-delay: 0.5s;
+      .neg-line {
+        background-color: $neg-colour;
+        fill:  $neg-colour;
+      }
+
+      .pos-line {
+        background-color: $pos-colour;
+        fill: $pos-colour;
+      }
+
+      .neu-line {
+        background-color: #fff;
+        fill: #fff;
+      }
+    }
+
+    .headlines {
+      position: absolute;
+      overflow: hidden;
+      padding-bottom: 4em;
+
+      .headline {
+        line-height: 2em;
+        font-size: 0.86em;
+        padding: 10px;
+        display: block;
+        overflow: hidden;
+
+        .s-neg, .s-pos {
+          animation: biggen 0.3s ease-in forwards;
+          animation-delay: 1s;
+        }
+
+        .v-neg, .v-pos {
+          animation: evenbiggen 0.3s ease-in forwards;
+          animation-delay: 0.5s;
+        }
       }
     }
   }
 }
 
 @keyframes biggen {
-  to { font-size: 2em }
+  to { font-size: 2.5em }
 }
 
 
 @keyframes evenbiggen {
-  to { font-size: 4em }
+  to { font-size: 3.5em }
 }
