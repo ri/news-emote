@@ -1,8 +1,11 @@
-.DS_STORE
-*.swp
-*.rbc
-*.sass-cache
-/pkg
-/doc/api
-/Gemfile.lock
-/coverage
+# IDE
+.idea/
+
+# nodejs
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# project
+dist/
+env.js

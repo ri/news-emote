@@ -1,14 +1,9 @@
-@import "variables";
+@import "Variables";
 
 
 body {
   background-color: #333;
   font-family: $type;
-
-  // #feeds > div {
-  //   width: 100px;
-  //   height: 100px;
-  // }
 
   h1 {
     text-align: center;

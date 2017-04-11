@@ -1,6 +1,8 @@
-class Headlines {
+import * as d3 from 'd3'
 
-  constructor(e, data) {
+export class Headlines {
+
+  constructor(data) {
     this.data = data["news-data"]
     this.data.forEach((d) => {
       d.counts = []
@@ -213,6 +215,3 @@ class Headlines {
   }
 }
 
-d3.queue()
-  .defer(d3.json, 'data/data-au.json')
-  .await((e, d) => new Headlines(e, d))
