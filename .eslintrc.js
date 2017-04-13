@@ -51,6 +51,7 @@ module.exports = {
     "no-cond-assign": "error",
     "no-const-assign": "error",
     "no-constant-condition": ["error", { "checkLoops": false }],
+    "no-console": "warn",
     "no-control-regex": "error",
     "no-debugger": "error",
     "no-delete-var": "error",
@@ -125,7 +126,7 @@ module.exports = {
     "no-unsafe-finally": "error",
     "no-unsafe-negation": "error",
     "no-unused-expressions": ["error", { "allowShortCircuit": true, "allowTernary": true, "allowTaggedTemplates": true }],
-    "no-unused-vars": ["error", { "vars": "all", "args": "none", "ignoreRestSiblings": true }],
+    "no-unused-vars": ["warn", { "vars": "all", "args": "none", "ignoreRestSiblings": true }],
     "no-use-before-define": ["error", { "functions": false, "classes": false, "variables": false }],
     "no-useless-call": "error",
     "no-useless-computed-key": "error",
@@ -142,10 +143,10 @@ module.exports = {
     "prefer-promise-reject-errors": "error",
     "quotes": ["error", "single", { "avoidEscape": true, "allowTemplateLiterals": true }],
     "rest-spread-spacing": ["error", "never"],
-    "semi": ["error", "never"],
+    "semi": ["warn", "never"],
     "semi-spacing": ["error", { "before": false, "after": true }],
     "space-before-blocks": ["error", "always"],
-    "space-before-function-paren": ["error", "always"],
+    "space-before-function-paren": ["warn", "never"],
     "space-in-parens": ["error", "never"],
     "space-infix-ops": "error",
     "space-unary-ops": ["error", { "words": true, "nonwords": false }],
@@ -162,21 +163,5 @@ module.exports = {
     "wrap-iife": ["error", "any", { "functionPrototypeMethods": true }],
     "yield-star-spacing": ["error", "both"],
     "yoda": ["error", "never"],
-
-    "import/export": "error",
-    "import/first": "error",
-    "import/no-absolute-path": "error",
-    "import/no-duplicates": "error",
-    "import/no-webpack-loader-syntax": "error",
-
-    "node/no-deprecated-api": "error",
-    "node/process-exit-as-throw": "error",
-
-    "promise/param-names": "error",
-
-    "standard/array-bracket-even-spacing": ["error", "either"],
-    "standard/computed-property-even-spacing": ["error", "even"],
-    "standard/no-callback-literal": "error",
-    "standard/object-curly-even-spacing": ["error", "either"]
   }
 };
