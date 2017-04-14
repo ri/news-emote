@@ -1,4 +1,5 @@
 import * as d3 from 'd3'
+import queryString from 'query-string'
 
 export class Headlines {
   constructor(data) {
@@ -12,7 +13,7 @@ export class Headlines {
     this.posFilter = (d) => d.sentiment.compound >= 0.25
     this.negFilter = (d) => d.sentiment.compound <= -0.25
     this.noFilter = (d) => true
-    this.currentFilter = this.noFilter
+    this.currentFilter = 'noFilter'
     this.currentIndex = 0
 
     // data["news-data"].forEach((d) => {
@@ -79,16 +80,33 @@ export class Headlines {
       .attr('class', 'headlines')
       .each(function(d, i) { self.createHeadlines(d, this, i) })
 
-    d3.select('#show-all').on('click', () => this.filterBy(this.noFilter))
-    d3.select('#hide-neutral').on('click', () => this.filterBy(this.noNeutralFilter))
-    d3.select('#all-bad').on('click', () => this.filterBy(this.negFilter))
-    d3.select('#all-good').on('click', () => this.filterBy(this.posFilter))
+    d3.select('#show-all').on('click', () => this.filterBy('noFilter'))
+    d3.select('#hide-neutral').on('click', () => this.filterBy('noNeutralFilter', 'mixed'))
+    d3.select('#all-bad').on('click', () => this.filterBy('negFilter', 'bad'))
+    d3.select('#all-good').on('click', () => this.filterBy('posFilter', 'good'))
   }
 
-  filterBy(filter) {
+  filterBy(filter, name) {
     this.currentFilter = filter
     this.contain.selectAll('.headline')
-      .style('display', (d) => filter(d) ? null : 'none')
+      .style('display', (d) => this[filter](d) ? null : 'none')
+
+    d3.selectAll('#controls li a')
+      .classed('active', function() {
+        return d3.select(this).attr('data-filter') === filter
+      })
+
+    // update query string
+
+    var parsed = queryString.parse(location.search)
+
+    if (name) {
+      parsed.filter = name
+    } else {
+      delete parsed.filter
+    }
+    var url = `${location.protocol}//${location.host}${location.pathname}` + '?' + queryString.stringify(parsed)
+    window.history.pushState('', '', url)
   }
 
   genTag(entries, tag, text) {
@@ -114,64 +132,61 @@ export class Headlines {
     return this.posFilter(d) ? 'pos' : this.negFilter(d) ? 'neg' : 'neu'
   }
 
+  renderHeadline(curr, data, el) {
+    if (curr < data.sentiments.length) {
+      var d = data.sentiments[curr]
+
+      // Update values for count graph
+      var prevCounts = data.counts[curr]
+      var counts = Object.assign({}, prevCounts)
+      counts[this.sentimentCat(d)]++
+      counts.total++
+      data.counts.push(counts)
+
+      d3.select(el).insert('div', ':first-child')
+        .datum(d)
+        .attr('class', 'headline')
+        .html((d) => this.emText(d))
+        .style('background-color', (d) => this.cScale(d.sentiment.compound))
+        .style('margin-top', function() { return `-${d3.select(this).node().offsetHeight}px` })
+        .style('display', (d) => this[this.currentFilter](d) ? null : 'none')
+        .transition()
+        .delay(200)
+        .style('margin-top', '0px')
+
+      var lines = d3.select(el.parentNode)
+
+      lines.select('.sentiment-lines .pos-line')
+        .transition()
+        .attr('width', `${counts.pos / counts.total * 100}%`)
+
+      lines.select('.sentiment-lines .neg-line')
+        .transition()
+        .attr('x', `${counts.pos / counts.total * 100}%`)
+        .attr('width', `${counts.neg / counts.total * 100}%`)
+
+      lines.select('.sentiment-lines .neu-line')
+        .transition()
+        .attr('x', `${(counts.pos + counts.neg) / counts.total * 100}%`)
+        .attr('width', `${counts.neu / counts.total * 100}%`)
+
+      var next = data.sentiments[curr + 1]
+      var duration = this[this.currentFilter](next) ? 2400 : 0
+
+      setTimeout(() => { this.renderHeadline(curr + 1, data, el) }, duration)
+    } else {
+      d3.select(el).insert('div', ':first-child')
+          .attr('class', 'headlines-end')
+          .text('End of feed')
+    }
+  }
+
   createHeadlines(data, el, index) {
     console.log(data)
-    var headlines = data.sentiments
 
-    d3.timeout(() => {
+    setTimeout(() => {
       var curr = 0
-
-      var t = d3.interval(() => {
-        if (curr < headlines.length) {
-          var d = data.sentiments[curr]
-
-          // Update values for count graph
-          var prevCounts = data.counts[curr]
-          var counts = Object.assign({}, prevCounts)
-          counts[this.sentimentCat(d)]++
-          counts.total++
-          data.counts.push(counts)
-
-          d3.select(el).insert('div', ':first-child')
-            .datum(d)
-            .attr('class', 'headline')
-            .html((d) => this.emText(d))
-            .style('background-color', (d) => this.cScale(d.sentiment.compound))
-            .style('margin-top', function() { return `-${d3.select(this).node().offsetHeight}px` })
-            .style('display', (d) => this.currentFilter(d) ? null : 'none')
-            .transition()
-            .delay(200)
-            .style('margin-top', '0px')
-
-          var lines = d3.select(el.parentNode)
-
-          lines.select('.sentiment-lines .pos-line')
-            // .datum((d) => data.counts)
-            .transition()
-            .attr('width', `${counts.pos / counts.total * 100}%`)
-
-          lines.select('.sentiment-lines .neg-line')
-            // .datum((d) => data.counts)
-            .transition()
-            .attr('x', `${counts.pos / counts.total * 100}%`)
-            .attr('width', `${counts.neg / counts.total * 100}%`)
-
-          lines.select('.sentiment-lines .neu-line')
-            // .datum((d) => data.counts)
-            .transition()
-            .attr('x', `${(counts.pos + counts.neg) / counts.total * 100}%`)
-            .attr('width', `${counts.neu / counts.total * 100}%`)
-
-          // if (this.currentIndex < curr) { this.lineX.domain([0, counts.total])}
-          this.currentIndex = curr++
-        } else {
-          d3.select(el).insert('div', ':first-child')
-            .attr('class', 'headlines-end')
-            .text('End of feed')
-
-          t.stop()
-        }
-      }, 2400)
+      this.renderHeadline(curr, data, el)
     }, index * 400)
   }
 }
