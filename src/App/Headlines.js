@@ -27,42 +27,42 @@ export class Headlines {
 
     var key = d3.select('#colour-key')
       .append('svg')
-      .attr("width", "100%")
-      .attr("height", 40)
+      .attr('width', '100%')
+      .attr('height', 40)
 
-    var gradient = key.append("defs")
-      .append("linearGradient")
-        .attr("id", "gradient")
+    var gradient = key.append('defs')
+      .append('linearGradient')
+        .attr('id', 'gradient')
 
-    gradient.selectAll("stop")
+    gradient.selectAll('stop')
       .data(this.colourRange)
       .enter()
-      .append("stop")
-      .attr("offset", (d,i) => `${i * 100/(this.colourRange.length-1)}%`)
-      .attr("stop-color", (d) => d)
-      .attr("stop-opacity", 1)
+      .append('stop')
+      .attr('offset', (d, i) => `${i * 100 / (this.colourRange.length - 1)}%`)
+      .attr('stop-color', (d) => d)
+      .attr('stop-opacity', 1)
 
-    key.append("rect")
-      .attr("width", "100%")
-      .attr("height", 10)
-      .style("fill", "url(#gradient)")
-      .attr("stroke", "#999")
+    key.append('rect')
+      .attr('width', '100%')
+      .attr('height', 10)
+      .style('fill', 'url(#gradient)')
+      .attr('stroke', '#999')
 
-    key.append("text")
-      .attr("y", 25)
-      .text("Negative")
+    key.append('text')
+      .attr('y', 25)
+      .text('Negative')
 
-    key.append("text")
-      .attr("y", 25)
-      .attr("x", "50%")
-      .attr("text-anchor", "middle")
-      .text("Neutral")
+    key.append('text')
+      .attr('y', 25)
+      .attr('x', '50%')
+      .attr('text-anchor', 'middle')
+      .text('Neutral')
 
-    key.append("text")
-      .attr("y", 25)
-      .attr("x", "100%")
-      .attr("text-anchor", "end")
-      .text("Positive")
+    key.append('text')
+      .attr('y', 25)
+      .attr('x', '100%')
+      .attr('text-anchor', 'end')
+      .text('Positive')
 
     this.newsFeeds = this.contain.selectAll('div.news-feed')
       .data(this.data)
@@ -131,7 +131,7 @@ export class Headlines {
     // update query string
 
     var parsed = queryString.parse(location.search)
-    console.log(filter)
+
     if (filter) {
       parsed.filter = filter
     } else {
@@ -146,7 +146,7 @@ export class Headlines {
     if (entries.length > 0) {
       var words = text.split(' ')
       entries.forEach(function(w) {
-        words.forEach((item, i) => { if (item.replace(/[.,\/#?!$%\^&\*;:{}=\-_`'‘’~()]/g,"") === w.word) words[i] = `<span class="${tag}">${w.word}</span>` })
+        words.forEach((item, i) => { if (item.replace(/[.,/#?!$%^&*;:{}=\-_`'‘’~()]/g, '') === w.word) words[i] = `<span class="${tag}">${w.word}</span>` })
       })
       tagged = words.join(' ')
     }
@@ -170,7 +170,7 @@ export class Headlines {
     if (curr < data.sentiments.length) {
       var d = data.sentiments[curr]
 
-      var next = data.sentiments[curr + 1]
+      // var next = data.sentiments[curr + 1]
       // if(next) {
       //   var duration = this[this.currentFilter](next) ? 2800 : 0
       // }

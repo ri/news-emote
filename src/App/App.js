@@ -27,9 +27,9 @@ export class App {
     d3.selectAll('.location')
       .text(loc)
 
-    var is_touch_device = 'ontouchstart' in document.documentElement;
+    var isTouch = 'ontouchstart' in document.documentElement
 
-    if(is_touch_device){
+    if (isTouch) {
       var curr = 0
       var el = document.getElementById('swipe-wrapper')
       var hammer = new Hammer(el)
@@ -65,7 +65,7 @@ export class App {
       })
     }
 
-    var modal = d3.select('#about-btn')
+    d3.select('#about-btn')
       .on('click', () => {
         d3.select('#about-modal')
           .classed('active', true)

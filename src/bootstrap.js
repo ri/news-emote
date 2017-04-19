@@ -27,7 +27,6 @@ function main() {
     filter = hash.filter
   }
 
-  console.log(filter)
   const app = new App({
     dom: dom
   })

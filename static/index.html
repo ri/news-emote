@@ -10,7 +10,6 @@
   </head>
   <body>
     <div class="content">
-      <div class="loading">Fetching most recent data...</div>
       <header>
         <h1>Mood of the News <span class="location"></span></h1>
         <a id="about-btn" title="about">
@@ -22,6 +21,8 @@
         <ul class="nav-dots">
         </ul>
       </header>
+      <div class="loading">Fetching most recent data...</div>
+
       <div id="controls">
         <h2>Filter</h2>
         <ul>
@@ -48,11 +49,11 @@
 
           <div id="colour-key"><h3>Key</h3></div>
 
-          <p>Each headline is colour-coded using the above key. Words that correlate with strong negative or positive emotions are emphasised. The headlines are displayed sequentially, with the headline that is found at the start of the website source displayed first. The striped band at the top of each news feed shows the proportion of positive, negative and neutral headlines that have appeared so far.</p>
+          <p>Each headline is colour-coded using the above key. Words that are particularly emotionally charged are emphasised. The headlines are displayed sequentially, with the headline that is found at the start of the website source displayed first. The striped band at the top of each news feed shows the proportion of positive, negative and neutral headlines that have appeared so far.</p>
 
           <p>Currently, you can browse <a href="http://newsmood.studiometric.co?loc=au">Australian</a> and <a href="http://newsmood.studiometric.co?loc=us">US</a> news websites. More regions may be added in the future. The choice of news outlets was based on popularity and representation across a range of political leanings.</p>
 
-          <p>As this process is automated and analysed using code, which means that we can only get a 'dumb robot' interpretation of sentiment. This can sometimes be problematic because often what is considered positive or negative emotion to humans is based on context. This tool uses an open source semantic analysis library called VADER, which was developed using <a href="http://comp.social.gatech.edu/papers/icwsm14.vader.hutto.pdf" target="_blank">a variety of text sources including tweets and New York Times opinion articles</a>. One example of how analysis fails to capture accurate sentiment is negative news coverage on the company <em>United Airlines</em>. <em>'United'</em> is classified as a positive term, but because it is difficult to distinguish as related to the entity <em>'United Airlines'</em>, negative news articles containing the word 'United' can get miscategorised. Eg: <em>"United Is the Latest Company to Fly Into a Social Media Storm"</em> is categorised as a positive headline. While this is non-ideal, the art of analysing human text is still a relatively difficult one for computers and this app is a best attempt at this problem for a personal project by someone who is neither a machine learning or linguistics expert.</p>
+          <p>As the analysis process is automated using code, we can only get a 'dumb robot' interpretation of sentiment. This can sometimes be problematic because often what is considered positive or negative emotion to humans is based on context. This tool uses an open source semantic analysis library called VADER, which was developed using <a href="http://comp.social.gatech.edu/papers/icwsm14.vader.hutto.pdf" target="_blank">a variety of text sources including tweets and New York Times opinion articles</a>. One example of how analysis fails to capture accurate sentiment is negative news coverage on the company <em>United Airlines</em>. <em>'United'</em> is classified as a positive term, but because it is difficult to distinguish as related to the entity <em>'United Airlines'</em>, negative news articles containing the word 'United' can get miscategorised. Eg: <em>"United Is the Latest Company to Fly Into a Social Media Storm"</em> is categorised as a positive headline. While this is non-ideal, the art of analysing human text is still a relatively difficult one for computers and this app is a best attempt at this problem for a personal project by someone who is neither a machine learning or linguistics expert.</p>
 
           <h3>View the source on Github:</h3>
             <p>Analyser: <a href="https://github.com/ri/news-emote-analyser" target="_blank">https://github.com/ri/news-emote-analyser</a></p>
