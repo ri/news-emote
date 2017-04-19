@@ -9,29 +9,14 @@ export class Headlines {
       d.counts[0] = { pos: 0, neg: 0, neu: 0, total: 0 }
     })
 
-    this.noNeutralFilter = (d) => !(d.sentiment.compound > -0.25 && d.sentiment.compound < 0.25)
+    this.mixedFilter = (d) => !(d.sentiment.compound > -0.25 && d.sentiment.compound < 0.25)
     this.posFilter = (d) => d.sentiment.compound >= 0.25
     this.negFilter = (d) => d.sentiment.compound <= -0.25
     this.noFilter = (d) => true
     this.currentFilter = 'noFilter'
     this.currentIndex = 0
-
-    // data["news-data"].forEach((d) => {
-    //   var mean = d3.mean(d.sentiments, (h) => h.sentiment.compound)
-    //   var extent = d3.extent(d.sentiments, (h) => h.sentiment.compound)
-    //   var numNeg = d.sentiments.filter((h) => h.sentiment.compound <= -0.25)
-    //   var numNeu = d.sentiments.filter((h) => h.sentiment.compound > -0.25 && h.sentiment.compound < 0.25)
-    //   var numPos = d.sentiments.filter((h) => h.sentiment.compound >= 0.25)
-    //   // console.log(d.name, mean, extent)
-    //   var histogram = d3.histogram()
-    //     .value((d) => d.sentiment.compound)
-    //     .domain([-1, 1])
-    //     .thresholds([-1, -0.6, -0.2, 0.2, 0.6, 1])
-    //   // console.log(histogram(d.sentiments))
-    //   // d3.select("#feeds").append("div").style("background-color", cScale(mean))
-
-    // })
-    this.cScale = d3.scalePow(2).domain([-1, -0.5, 0, 0.5, 1]).range(['#d7191c', '#fdae61', '#ffffbf', '#a6d96a', '#1a9641'])
+    this.colourRange = ['#d7191c', '#fdae61', '#ffffbf', '#a6d96a', '#1a9641']
+    this.cScale = d3.scalePow(2).domain([-1, -0.5, 0, 0.5, 1]).range(this.colourRange)
     this.contain = d3.select('#feeds')
 
     this.draw()
@@ -39,6 +24,45 @@ export class Headlines {
 
   draw() {
     var self = this
+
+    var key = d3.select('#colour-key')
+      .append('svg')
+      .attr("width", "100%")
+      .attr("height", 40)
+
+    var gradient = key.append("defs")
+      .append("linearGradient")
+        .attr("id", "gradient")
+
+    gradient.selectAll("stop")
+      .data(this.colourRange)
+      .enter()
+      .append("stop")
+      .attr("offset", (d,i) => `${i * 100/(this.colourRange.length-1)}%`)
+      .attr("stop-color", (d) => d)
+      .attr("stop-opacity", 1)
+
+    key.append("rect")
+      .attr("width", "100%")
+      .attr("height", 10)
+      .style("fill", "url(#gradient)")
+      .attr("stroke", "#999")
+
+    key.append("text")
+      .attr("y", 25)
+      .text("Negative")
+
+    key.append("text")
+      .attr("y", 25)
+      .attr("x", "50%")
+      .attr("text-anchor", "middle")
+      .text("Neutral")
+
+    key.append("text")
+      .attr("y", 25)
+      .attr("x", "100%")
+      .attr("text-anchor", "end")
+      .text("Positive")
 
     this.newsFeeds = this.contain.selectAll('div.news-feed')
       .data(this.data)
@@ -49,7 +73,7 @@ export class Headlines {
     this.lines = this.newsFeeds.append('svg')
       .attr('class', 'sentiment-lines')
       .style('width', '100%')
-      .style('height', '5')
+      .style('height', '8')
 
     this.newsFeeds.append('div')
       .attr('class', 'title')
@@ -58,21 +82,21 @@ export class Headlines {
     this.lines.append('rect')
       .datum((d) => d.counts)
       .attr('class', 'pos-line')
-      .attr('height', 5)
+      .attr('height', 8)
       .attr('width', `${100 / 3}%`)
       // .style("width", "calc(100%  /3);")
 
     this.lines.append('rect')
       .datum((d) => d.counts)
       .attr('class', 'neg-line')
-      .attr('height', 5)
+      .attr('height', 8)
       .attr('x', `${100 / 3}%`)
       .attr('width', `${100 / 3}%`)
 
     this.lines.append('rect')
       .datum((d) => d.counts)
       .attr('class', 'neu-line')
-      .attr('height', 5)
+      .attr('height', 8)
       .attr('x', `${100 / 3 * 2}%`)
       .attr('width', `${100 / 3}%`)
 
@@ -80,28 +104,36 @@ export class Headlines {
       .attr('class', 'headlines')
       .each(function(d, i) { self.createHeadlines(d, this, i) })
 
-    d3.select('#show-all').on('click', () => this.filterBy('noFilter'))
-    d3.select('#hide-neutral').on('click', () => this.filterBy('noNeutralFilter', 'mixed'))
-    d3.select('#all-bad').on('click', () => this.filterBy('negFilter', 'bad'))
-    d3.select('#all-good').on('click', () => this.filterBy('posFilter', 'good'))
+    d3.select('.nav-dots').selectAll('li')
+      .data([...Array(this.data.length).keys()])
+      .enter()
+      .append('li')
+      .attr('class', (d, i) => `nav-${i}`)
+
+    d3.select('#show-all').on('click', () => this.filterBy(null))
+    d3.select('#hide-neutral').on('click', () => this.filterBy('mixed'))
+    d3.select('#all-bad').on('click', () => this.filterBy('neg'))
+    d3.select('#all-good').on('click', () => this.filterBy('pos'))
   }
 
-  filterBy(filter, name) {
-    this.currentFilter = filter
+  filterBy(filter) {
+    this.currentFilter = filter ? `${filter}Filter` : 'noFilter'
     this.contain.selectAll('.headline')
-      .style('display', (d) => this[filter](d) ? null : 'none')
+      .style('display', (d) => this[this.currentFilter](d) ? null : 'none')
+
+    var btn = filter ? this.currentFilter : 'noFilter'
 
     d3.selectAll('#controls li a')
       .classed('active', function() {
-        return d3.select(this).attr('data-filter') === filter
+        return d3.select(this).attr('data-filter') === btn
       })
 
     // update query string
 
     var parsed = queryString.parse(location.search)
-
-    if (name) {
-      parsed.filter = name
+    console.log(filter)
+    if (filter) {
+      parsed.filter = filter
     } else {
       delete parsed.filter
     }
@@ -112,20 +144,22 @@ export class Headlines {
   genTag(entries, tag, text) {
     var tagged = text
     if (entries.length > 0) {
+      var words = text.split(' ')
       entries.forEach(function(w) {
-        tagged = text.replace(w.word, `<span class="${tag}">${w.word}</span>`)
+        words.forEach((item, i) => { if (item.replace(/[.,\/#?!$%\^&\*;:{}=\-_`'‘’~()]/g,"") === w.word) words[i] = `<span class="${tag}">${w.word}</span>` })
       })
+      tagged = words.join(' ')
     }
     return tagged
   }
 
   emText(d) {
     var text = d.headline
-    text = this.genTag(d.v_neg, 'v-neg', text)
-    text = this.genTag(d.s_neg, 's-neg', text)
-    text = this.genTag(d.s_pos, 's-pos', text)
-    text = this.genTag(d.v_pos, 'v-pos', text)
-    return text
+    var text1 = this.genTag(d.v_neg, 'v-neg', text)
+    var text2 = this.genTag(d.s_neg, 's-neg', text1)
+    var text3 = this.genTag(d.s_pos, 's-pos', text2)
+    var text4 = this.genTag(d.v_pos, 'v-pos', text3)
+    return text4
   }
 
   sentimentCat(d) {
@@ -136,25 +170,37 @@ export class Headlines {
     if (curr < data.sentiments.length) {
       var d = data.sentiments[curr]
 
+      var next = data.sentiments[curr + 1]
+      // if(next) {
+      //   var duration = this[this.currentFilter](next) ? 2800 : 0
+      // }
+
+      var delay1 = this[this.currentFilter](d) ? 200 : 0
+      var delay2 = this[this.currentFilter](d) ? 2800 : 0
+
       // Update values for count graph
       var prevCounts = data.counts[curr]
       var counts = Object.assign({}, prevCounts)
-      counts[this.sentimentCat(d)]++
+      var cat = this.sentimentCat(d)
+      counts[cat]++
       counts.total++
       data.counts.push(counts)
+      var lines = d3.select(el.parentNode)
 
       d3.select(el).insert('div', ':first-child')
         .datum(d)
-        .attr('class', 'headline')
+        .attr('class', `headline ${cat}`)
         .html((d) => this.emText(d))
         .style('background-color', (d) => this.cScale(d.sentiment.compound))
         .style('margin-top', function() { return `-${d3.select(this).node().offsetHeight}px` })
         .style('display', (d) => this[this.currentFilter](d) ? null : 'none')
         .transition()
-        .delay(200)
+        .duration(delay1)
+        // .delay(delay1)
         .style('margin-top', '0px')
-
-      var lines = d3.select(el.parentNode)
+        .on('end', () => {
+          setTimeout(() => { this.renderHeadline(curr + 1, data, el) }, delay2)
+        })
 
       lines.select('.sentiment-lines .pos-line')
         .transition()
@@ -170,10 +216,7 @@ export class Headlines {
         .attr('x', `${(counts.pos + counts.neg) / counts.total * 100}%`)
         .attr('width', `${counts.neu / counts.total * 100}%`)
 
-      var next = data.sentiments[curr + 1]
-      var duration = this[this.currentFilter](next) ? 2400 : 0
-
-      setTimeout(() => { this.renderHeadline(curr + 1, data, el) }, duration)
+      // setTimeout(() => { this.renderHeadline(curr + 1, data, el) }, duration)
     } else {
       d3.select(el).insert('div', ':first-child')
           .attr('class', 'headlines-end')
@@ -182,11 +225,9 @@ export class Headlines {
   }
 
   createHeadlines(data, el, index) {
-    console.log(data)
-
     setTimeout(() => {
       var curr = 0
       this.renderHeadline(curr, data, el)
-    }, index * 400)
+    }, index * 500)
   }
 }

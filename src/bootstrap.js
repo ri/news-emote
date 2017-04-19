@@ -5,20 +5,29 @@ import './theme/theme.scss'
 import {App} from './App'
 import reqwest from 'reqwest'
 import queryString from 'query-string'
-import './vendor/scrollsnap-polyfill.bundled'
+// import './vendor/scrollsnap-polyfill.bundled'
 /**
  * entrance code for SPA
  */
 function main() {
   document.title = 'Loading...'
+
+  // Query string format: ?loc=us|au&filter=bad|good|mixed
   var dom = document.querySelector('.content')
   var hash = queryString.parse(location.search)
   var loc = 'au'
+  var filter = null
+  var lang = navigator.language || navigator.userLanguage
 
-  if (hash.loc === 'us') {
+  if (hash.loc === 'us' || (!hash.loc && lang === 'en-US')) {
     loc = 'us'
   }
 
+  if (hash.filter === 'neg' | hash.filter === 'pos' | hash.filter === 'mixed') {
+    filter = hash.filter
+  }
+
+  console.log(filter)
   const app = new App({
     dom: dom
   })
@@ -27,7 +36,7 @@ function main() {
     url: `https://s3.amazonaws.com/data.newsemote/${loc}/latest.json`,
     type: 'json',
     crossOrigin: true,
-    success: (resp) => app.render(resp)
+    success: (resp) => app.render(resp, loc, filter)
   })
 
   // we can make requests to multiple domains, check out proxy/rules.js

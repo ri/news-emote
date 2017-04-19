@@ -1,23 +1,70 @@
-@import "Variables";
-
+@import "variables";
+@import "modal";
+@import "navdots";
 
 body {
   background-color: #333;
   font-family: $type;
+  margin: 0;
+  padding: 0;
 
-  h1 {
-    text-align: center;
+  a {
+    color: #464646;
+  }
+
+  .loading {
     color: #fff;
-    font-weight: normal;
-    font-size: 1.5em;
-    // text-transform: uppercase;
-    margin: 0 0 0.5em;
+    text-align: center;
+    margin: 1em;
+    font-size: 2em;
+  }
+
+  #colour-key {
+    font-size: 14px;
+    width: 50%;
+    clear: both;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .info {
+    font-size:16px;
+    margin-bottom: 0.5em;
+  }
+
+  header {
     position: fixed;
     bottom: 10px;
     left: 0;
+    z-index: 100;
     background-color: rgba(0,0,0,0.7);
     padding: 0 20px;
-    z-index: 100;
+
+    h1 {
+      text-align: center;
+      color: #fff;
+      font-weight: normal;
+      font-size: 1.5em;
+      // text-transform: uppercase;
+      margin: 0;
+      margin-right: 20px;
+      height: 2.5em;
+      line-height: 2.5em;
+      display: inline-block;
+    }
+
+    .location { color: #666 }
+
+    #about-btn {
+      background-color: transparent;
+      cursor: pointer;
+      circle, polygon {
+        transition: fill 0.2s;
+      }
+      &:hover svg {
+        circle, polygon { fill: #ddd; }
+      }
+    }
   }
 
   #controls {
@@ -25,21 +72,38 @@ body {
     height: 3em;
     position: fixed;
     bottom: 10px;
-    z-index: 100;
+    z-index: 50;
     right: 10px;
 
-    a {
-      padding: 2px 5px;
-      margin: 0 1em;
-      color: #222;
-      background-color: #666;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: background-color 0.2s;
+    h2 {
+      display: none;
+    }
+    ul {
+      margin: 0;
+      padding: 0;
+    }
+    li {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: inline-block;
+
+      a {
+        padding: 2px 5px;
+        margin: 0 1em;
+        color: #222;
+        background-color: #676767;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        &.active {
+          border: 1px solid #333;
+        }
+      }
     }
 
     #show-all { &.active { background-color: #fff; } &:hover { background-color: #ddd }}
-    #hide-neutral { &.active { background-color: #666; } &:hover { background-color: #999 }}
+    #hide-neutral { &.active { background-color: #ddd; } &:hover { background-color: #999 }}
     #all-good { &.active { background-color: #1a9641; } &:hover { background-color: lighten(#1a9641, 10%)}}
     #all-bad { &.active { background-color: #d7191c; } &:hover { background-color: lighten(#d7191c, 10%)}}
 
@@ -48,29 +112,28 @@ body {
   #feeds {
     display: flex;
     height: 100vh;
-    position: absolute;
+    position: relative;
     width: 100%;
-    top: 0;
   }
   .news-feed {
     // height: 100vh;
-    background-color: #2d2d2d;
-    flex: 1;
+    flex: 1 1 20%;
     // overflow-y: scroll;
     position: relative;
     text-align: left;
     padding-bottom: 2em;
 
-    &:nth-child(2n) {
+    &:nth-child(2n) .title {
       background-color: #333;
     }
 
     .title {
       position: relative;
       font-size: 1.25em;
-      margin: 0.5em 0;
+      margin: 0;
+      padding: 0.6em 0;
       font-weight: normal;
-      // background-color: #333;
+      background-color: #2d2d2d;
       color: #fff;
       width: 100%;
       text-align: center;
@@ -79,12 +142,6 @@ body {
     .sentiment-lines {
       position: absolute;
       z-index: 10;
-
-      > div {
-        height: 6px;
-        width: calc(100%  /3);
-        float: left;
-      }
 
       .neg-line {
         background-color: $neg-colour;
@@ -103,16 +160,28 @@ body {
     }
 
     .headlines {
-      position: absolute;
-      overflow: hidden;
-      padding-bottom: 4em;
+      position: relative;
+      overflow-x: hidden;
+
+      &:after {
+        display: block;
+        height: 2em;
+        content: ' ';
+        width: 100%;
+      }
 
       .headline {
         line-height: 2em;
         font-size: 0.86em;
         padding: 10px;
         display: block;
+        position: relative;
         overflow: hidden;
+        border-bottom: 1px solid #333;
+
+        &.neu {
+          line-height: 1.25em;
+        }
 
         .s-neg, .s-pos {
           animation: biggen 0.3s ease-in forwards;
@@ -124,6 +193,112 @@ body {
           animation-delay: 0.5s;
         }
       }
+
+      .headlines-end {
+        width: 100%;
+        background-color: #666;
+        color: #bbb;
+        text-align: center;
+        padding: 10px 0;
+      }
+    }
+  }
+
+  @media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+    header {
+      position: relative;
+      height: 60px;
+      bottom: 0;
+      text-align: center;
+
+      h1 {
+        line-height: 40px;
+        height: auto;
+        margin: 0;
+      }
+      #about-btn {
+        position: absolute;
+        right: 10px;
+        top: 8px;
+      }
+    }
+
+    .news-feed {
+      flex: 0 0 100%;
+
+      .headlines {
+        overflow-y: scroll;
+        height: 100vh;
+      }
+    }
+
+    #swipe-wrapper {
+      overflow-x: scroll;
+    }
+
+    #feeds {
+      width: 100vw;
+      height: 100vh;
+      height: calc(100vh - 60px);
+    }
+
+    #controls {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background-color: #666;
+      right: 0;
+      height: 2.5em;
+      line-height: 2.5em;
+
+      h2 {
+        display: initial;
+        color: #fff;
+        font-weight: normal;
+        padding: 0;
+        margin: 0;
+        font-size: 1em;
+        pointer-events: none;
+      }
+
+      ul {
+        display: none;
+        position: absolute;
+        bottom: 2.5em;
+
+        a, li {
+          display: none;
+        }
+
+        &.active {
+          display: block;
+
+          li,a {
+            display: block;
+          }
+
+          a {
+            width: 100vw;
+            border-radius: 0;
+            margin: 0;
+            background-color: #bbb;
+            color: #333;
+
+            &#show-all, &#hide-neutral, &#all-bad, &#all-good {
+              &.active {
+                background-color: #4d4d4d;
+                color: #fff;
+                border: none;
+              }
+            }
+          }
+        }
+      }
+
+      &:hover {
+        ul { display: block }
+      }
+
     }
   }
 }

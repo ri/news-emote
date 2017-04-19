@@ -33,6 +33,11 @@ module.exports = {
         loader: 'json-loader'
       },
 
+     {
+          test: /\.html$/,
+          loader: "html-loader"
+      },
+
       {
         test: /\.(jpg|png|gif|eot|svg|ttf|woff|woff2)$/,
         loader: 'file',

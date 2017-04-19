@@ -4,21 +4,72 @@
     <title></title>
       <meta content="en" http-equiv="Content-Language">
       <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
       <script src="https://use.typekit.net/vjn6mjv.js"></script>
       <script>try{Typekit.load({ async: true });}catch(e){}</script>
   </head>
   <body>
     <div class="content">
-      <h1>Mood of the News</h1>
+      <div class="loading">Fetching most recent data...</div>
+      <header>
+        <h1>Mood of the News <span class="location"></span></h1>
+        <a id="about-btn" title="about">
+            <svg width="8px" height="18px" viewBox="0 0 11 24"><g id="info" fill="#999">
+              <polygon points="0 8.22857143 8.22857143 8.22857143 8.22857143 21.2571429 10.9714286 21.2571429 10.9714286 24 0 24 0 21.2571429 2.74285714 21.2571429 2.74285714 10.2857143 0 10.2857143"></polygon>
+              <circle id="Oval" cx="5.48571429" cy="2.74285714" r="2.74285714"></circle>
+            </g></svg>
+          </a>
+        <ul class="nav-dots">
+        </ul>
+      </header>
       <div id="controls">
-        <a id="show-all" class="active">Show All</a>
-        <a id="hide-neutral">Hide Neutral</a>
-        <a id="all-bad">All Bad</a>
-        <a id="all-good">All Good</a>
+        <h2>Filter</h2>
+        <ul>
+          <li><a id="show-all" data-filter="noFilter" class="active">Show All</a></li>
+          <li><a id="hide-neutral" data-filter="mixedFilter">Hide Neutral</a></li>
+          <li><a id="all-bad" data-filter="negFilter">All Negative</a></li>
+          <li><a id="all-good" data-filter="posFilter">All Positive</a></li>
+        </ul>
       </div>
 
-      <div id="feeds"></div>
+      <div id="swipe-wrapper">
+        <div id="feeds"></div>
+      </div>
+      <div id="about-modal">
+        <a class="close"><svg height="20px" width="20px"><path d="M2,2 L18,18 M18,2 L2,18" id="Shape" stroke="#666666" stroke-width="3" fill="#666666" fill-rule="nonzero"></path></svg></a>
+        <div class="about-content">
+
+          <p style="float: left" class="info"><em>Made by <a href="http://studiometric.co">Ri Liu</a>. Last updated <span id="last-update"></span></em></p>
+          <p class="info" style="float: right">Versions: <a href="http://newsmood.studiometric.co?loc=au">Australia</a> | <a href="http://newsmood.studiometric.co?loc=us">US</a></p>
+
+          <p style="clear: both; margin-top: 3em">The news is a major part of how many people obtain information every day. While it provides a vital function to keep people informed about the important issues, we don't often consciously consider how this constant stream of content affects our emotional wellbeing and outlook on the world.</p>
+
+          <p>This tool allows you to visualise the hidden emotional context of news headlines. The headlines are fetched daily and then processed for emotional content using a linguistic technique called semantic analysis.</p>
+
+          <div id="colour-key"><h3>Key</h3></div>
+
+          <p>Each headline is colour-coded using the above key. Words that correlate with strong negative or positive emotions are emphasised. The headlines are displayed sequentially, with the headline that is found at the start of the website source displayed first. The striped band at the top of each news feed shows the proportion of positive, negative and neutral headlines that have appeared so far.</p>
+
+          <p>Currently, you can browse <a href="http://newsmood.studiometric.co?loc=au">Australian</a> and <a href="http://newsmood.studiometric.co?loc=us">US</a> news websites. More regions may be added in the future. The choice of news outlets was based on popularity and representation across a range of political leanings.</p>
+
+          <p>As this process is automated and analysed using code, which means that we can only get a 'dumb robot' interpretation of sentiment. This can sometimes be problematic because often what is considered positive or negative emotion to humans is based on context. This tool uses an open source semantic analysis library called VADER, which was developed using <a href="http://comp.social.gatech.edu/papers/icwsm14.vader.hutto.pdf" target="_blank">a variety of text sources including tweets and New York Times opinion articles</a>. One example of how analysis fails to capture accurate sentiment is negative news coverage on the company <em>United Airlines</em>. <em>'United'</em> is classified as a positive term, but because it is difficult to distinguish as related to the entity <em>'United Airlines'</em>, negative news articles containing the word 'United' can get miscategorised. Eg: <em>"United Is the Latest Company to Fly Into a Social Media Storm"</em> is categorised as a positive headline. While this is non-ideal, the art of analysing human text is still a relatively difficult one for computers and this app is a best attempt at this problem for a personal project by someone who is neither a machine learning or linguistics expert.</p>
+
+          <h3>View the source on Github:</h3>
+            <p>Analyser: <a href="https://github.com/ri/news-emote-analyser" target="_blank">https://github.com/ri/news-emote-analyser</a></p>
+            <p>Visualisation: <a href="https://github.com/ri/news-emote" target="_blank">https://github.com/ri/news-emote</a></p>
+
+
+          <h3>Credits</h3>
+
+          <p>Hutto, C.J. & Gilbert, E.E. (2014). VADER: A Parsimonious Rule-based Model for
+          Sentiment Analysis of Social Media Text. Eighth International Conference on
+          Weblogs and Social Media (ICWSM-14). Ann Arbor, MI, June 2014.<p>
+
+          <p><a href="http://colorbrewer2.org/" target="_blank">Colorbrewer</a></p>
+
+        </div>
+      </div>
+      <div class="modal-bg"></div>
     </div>
   </body>
 </html>

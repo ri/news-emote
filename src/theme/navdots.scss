@@ -1,0 +1,33 @@
+.nav-dots {
+  display: none
+}
+
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
+  .nav-dots {
+    margin: 4px 0;
+    padding: 0;
+    width: 100%;
+    // bottom: 9px;
+    height: 10px;
+    display: block;
+    // position: absolute;
+    text-align: center;
+    z-index: 100;
+
+    li {
+      margin: 0;
+      top: -10px;
+      width: 8px;
+      height: 8px;
+      margin: 0 4px;
+      position: relative;
+      border-radius: 100%;
+      display: inline-block;
+      background-color: rgba(255, 255, 255, 0.2);
+
+      &.current {
+        background-color: rgba(255, 255, 255, 1);
+      }
+    }
+  }
+}
