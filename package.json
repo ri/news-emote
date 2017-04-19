@@ -1,35 +1,21 @@
 {
-  "name": "es6-webpack2-starter",
-  "version": "2.0.2",
-  "description": "A template project for es6/7, webpack2, sass and postcss",
+  "name": "news-emote",
+  "description": "News source headline sentiment visualisation",
   "scripts": {
-    "start": "webpack-dev-server --config webpack/dev.config.js --watch",
+    "start": "webpack-dev-server --config webpack/dev.config.js --watch --hot --host 0.0.0.0",
     "build": "NODE_ENV=production webpack --config webpack/prod.config.js --progress --display-error-details --color",
     "precommit": "eslint src --fix"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/micooz/es6-webpack-starter.git"
+    "url": "git+https://github.com/ri/news-emote.git"
   },
-  "keywords": [
-    "es6",
-    "es7",
-    "webpack2",
-    "starter",
-    "template",
-    "postcss",
-    "sass",
-    "css module"
-  ],
-  "author": "Micooz",
+  "author": "Ri Liu",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/micooz/es6-webpack-starter/issues"
-  },
-  "homepage": "https://github.com/micooz/es6-webpack-starter#readme",
   "dependencies": {
     "babel-polyfill": "^6.23.0",
     "d3": "^4.7.4",
+    "hammerjs": "^2.0.8",
     "query-string": "^4.3.2",
     "reqwest": "^2.0.5"
   },
