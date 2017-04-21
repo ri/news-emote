@@ -19,8 +19,10 @@ function main() {
   var filter = null
   var lang = navigator.language || navigator.userLanguage
 
-  if (hash.loc === 'us' || (!hash.loc && lang === 'en-US')) {
+  if (hash.loc === 'us' || (!hash.loc && lang.toLowerCase() === 'en-us')) {
     loc = 'us'
+  } else if (hash.loc === 'uk') {
+    loc = 'uk'
   }
 
   if (hash.filter === 'neg' | hash.filter === 'pos' | hash.filter === 'mixed') {
