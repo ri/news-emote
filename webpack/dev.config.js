@@ -3,7 +3,6 @@ const webpackMerge = require('webpack-merge');
 const webpackCommon = require('./common.config');
 
 const env = require('../env');
-const proxyRules = require('../proxy/rules');
 
 // webpack plugins
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -79,8 +78,7 @@ module.exports = webpackMerge(webpackCommon, {
     watchOptions: {
       aggregateTimeout: 300,
       poll: 1000
-    },
-    proxy: proxyRules
+    }
   }
 
 });
